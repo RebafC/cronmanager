@@ -3,6 +3,7 @@
 namespace CronManager;
 
 use PDO;
+use CronManager\TwigFactory;
 
 require_once __DIR__ . '/../config.php';
 
@@ -12,7 +13,7 @@ class Auth
 
     public function __construct()
     {
-        $dbase = __DIR__ . '/../data//' . 'users.db';
+        $dbase = __DIR__ . '/../data/users.db';
         $this->pdo = new PDO('sqlite:' . $dbase);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->init();
@@ -27,6 +28,14 @@ class Auth
                 `username` TEXT UNIQUE NOT NULL,
                 `password_hash` TEXT NOT NULL,
                 `created_at` TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS `password_resets` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `email` TEXT NOT NULL,
+                `token` TEXT NOT NULL,
+                `type` TEXT NOT NULL, -- 'invite' or 'reset'
+                `expires_at` TEXT,
+                `used` INTEGER DEFAULT 0
             );
             SQL
         );
@@ -101,8 +110,7 @@ class Auth
             session_start();
         }
 
-        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates');
-        $twig = new \Twig\Environment($loader);
+        $twig = TwigFactory::create();
 
         $loginAttempted = isset($_POST['login']);
         $loginSuccess = false;
@@ -121,4 +129,242 @@ class Auth
             'login_success' => $loginSuccess,
         ]);
     }
+
+    public function handleInvite(): void
+    {
+        $twig = TwigFactory::create();
+
+        $message = '';
+        $error = '';
+        $inviteLink = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = trim($_POST['email'] ?? '');
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Please enter a valid email address.';
+            } else {
+                $token = bin2hex(random_bytes(32));
+                $expires = date('Y-m-d H:i:s', strtotime('+1 day'));
+
+                $stmt = $this->pdo->prepare("
+                INSERT INTO `password_resets` (`email`, `token`, `type`, `expires_at`)
+                VALUES (:email, :token, 'invite', :expires)
+            ");
+                $stmt->execute([
+                    'email' => $email,
+                    'token' => $token,
+                    'expires' => $expires
+                ]);
+
+                $inviteLink = '/register?token=' . $token;
+                $message = 'Invitation created.';
+
+                Mailer::send(
+                    $email,
+                    'Your CronManager Invite',
+                    "You're invited to create an account. Click here to register:\n\n" . BASE_URL . $inviteLink
+                );
+                $message = 'Invitation created.';
+            }
+        }
+
+        echo $twig->render('invite.twig', [
+            'message' => $message,
+            'error' => $error,
+            'invite_link' => $inviteLink
+        ]);
+    }
+
+    public function handleRegister(): void
+    {
+        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates');
+        $twig = \CronManager\TwigFactory::create();
+
+        $message = '';
+        $error = '';
+        $token = $_GET['token'] ?? '';
+        $email = '';
+        $showForm = false;
+
+        if ($token) {
+            // Look up valid, unused invite token
+            $stmt = $this->pdo->prepare("
+            SELECT * FROM password_resets
+            WHERE token = :token AND type = 'invite' AND used = 0 AND expires_at > datetime('now')
+        ");
+            $stmt->execute(['token' => $token]);
+            $invite = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($invite) {
+                $email = $invite['email'];
+                $showForm = true;
+
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $password = $_POST['password'] ?? '';
+                    $confirm = $_POST['confirm_password'] ?? '';
+
+                    if (strlen($password) < 6) {
+                        $error = 'Password must be at least 6 characters.';
+                    } elseif ($password !== $confirm) {
+                        $error = 'Passwords do not match.';
+                    } elseif (!$this->createUser($email, $password)) {
+                        $error = 'User already exists or creation failed.';
+                    } else {
+                        // Mark token as used
+                        $update = $this->pdo->prepare("UPDATE `password_resets` SET `used` = 1 WHERE `id` = :id");
+                        $update->execute(['id' => $invite['id']]);
+
+                        // Auto-login
+                        $stmt = $this->pdo->prepare("SELECT `id` FROM `users` WHERE `username` = :email");
+                        $stmt->execute(['email' => $email]);
+                        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($user) {
+                            $_SESSION['user_id'] = $user['id'];
+                            $_SESSION['username'] = $email;
+
+                            header('Location: /dashboard');
+                            exit;
+                        }
+
+                    }
+                }
+            } else {
+                $error = 'Invalid or expired invite link.';
+            }
+        } else {
+            $error = 'Missing token.';
+        }
+
+        echo $twig->render('register.twig', [
+            'token' => $token,
+            'email' => $email,
+            'message' => $message,
+            'error' => $error,
+            'show_form' => $showForm,
+        ]);
+    }
+
+    public function handleForgot(): void
+    {
+        $twig = \CronManager\TwigFactory::create();
+
+        $message = '';
+        $error = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = trim($_POST['email'] ?? '');
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Please enter a valid email address.';
+            } else {
+                // Check if user exists
+                $stmt = $this->pdo->prepare("SELECT id FROM users WHERE username = :email");
+                $stmt->execute(['email' => $email]);
+                $exists = $stmt->fetch();
+
+                if ($exists) {
+                    $token = bin2hex(random_bytes(32));
+                    $expires = date('Y-m-d H:i:s', strtotime('+1 day'));
+
+                    $stmt = $this->pdo->prepare("
+                    INSERT INTO password_resets (email, token, type, expires_at)
+                    VALUES (:email, :token, 'reset', :expires)
+                ");
+                    $stmt->execute([
+                        'email' => $email,
+                        'token' => $token,
+                        'expires' => $expires
+                    ]);
+
+                    $link = BASE_URL . '/reset?token=' . $token;
+                    Mailer::send(
+                        $email,
+                        'Reset your CronManager password',
+                        "Click here to reset your password:\n\n$link"
+                    );
+
+                    $message = 'A reset link has been sent if your email is in our system.';
+                } else {
+                    $message = 'A reset link has been sent if your email is in our system.';
+                    // Don't reveal if user exists
+                }
+            }
+        }
+
+        echo $twig->render('forgot.twig', [
+            'message' => $message,
+            'error' => $error
+        ]);
+    }
+    public function handleReset(): void
+    {
+        $twig = \CronManager\TwigFactory::create();
+
+        $token = $_GET['token'] ?? '';
+        $message = '';
+        $error = '';
+        $showForm = false;
+
+        if ($token) {
+            $stmt = $this->pdo->prepare("
+            SELECT * FROM `password_resets`
+            WHERE `token` = :token AND `type` = 'reset' AND `used` = 0 AND `expires_at` > datetime('now')
+        ");
+            $stmt->execute(['token' => $token]);
+            $reset = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($reset) {
+                $showForm = true;
+
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $password = $_POST['password'] ?? '';
+                    $confirm = $_POST['confirm_password'] ?? '';
+
+                    if (strlen($password) < 6) {
+                        $error = 'Password must be at least 6 characters.';
+                    } elseif ($password !== $confirm) {
+                        $error = 'Passwords do not match.';
+                    } else {
+                        $hash = password_hash($password, PASSWORD_DEFAULT);
+                        $update = $this->pdo->prepare(
+                            "UPDATE `users` SET `password_hash` = :hash WHERE `username` = :email"
+                        );
+                        $update->execute([
+                            'hash' => $hash,
+                            'email' => $reset['email']
+                        ]);
+
+                        $markUsed = $this->pdo->prepare("UPDATE `password_resets` SET `used` = 1 WHERE `id` = :id");
+                        $markUsed->execute(['id' => $reset['id']]);
+
+                        // Optionally log them in
+                        $stmt = $this->pdo->prepare("SELECT `id` FROM `users` WHERE `username` = :email");
+                        $stmt->execute(['email' => $reset['email']]);
+                        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($user) {
+                            $_SESSION['user_id'] = $user['id'];
+                            $_SESSION['username'] = $reset['email'];
+                            header('Location: /dashboard');
+                            exit;
+                        }
+                    }
+                }
+            } else {
+                $error = 'Invalid or expired reset token.';
+            }
+        } else {
+            $error = 'Missing token.';
+        }
+
+        echo $twig->render('reset.twig', [
+            'token' => $token,
+            'message' => $message,
+            'error' => $error,
+            'show_form' => $showForm
+        ]);
+    }
+
 }

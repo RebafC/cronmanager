@@ -8,23 +8,27 @@
 			{% endblock %}
 		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="/assets/css/style.css">
-    {% block extra_styles %}{% endblock %}
-	</head>
-	<body>
-		<div class="container">
-			<h1>🕒 Cron Task Manager</h1>
+		<link rel="stylesheet" href="/assets/css/style.css"> {% block extra_styles %}{% endblock %}
+		</head>
+		<body>
+			<div class="container">
+				{% if session.username %}
+					<div style="float: right;">👤 {{ session.username }}
+            | <a href="/invite">Invite</a>
+            | <a href="/logout">Logout</a></div>
+				{% endif %}
+				<h1>🕒 Cron Task Manager</h1>
 
-			{% if message %}
-				<div class="alert alert-success">{{ message }}</div>
-			{% endif %}
-			{% if error %}
-				<div class="alert alert-error">{{ error }}</div>
-			{% endif %}
+				{% if message %}
+					<div class="alert alert-success">{{ message }}</div>
+				{% endif %}
+				{% if error %}
+					<div class="alert alert-error">{{ error }}</div>
+				{% endif %}
 
-			{% block content %}{% endblock %}
-		</div>
+				{% block content %}{% endblock %}
+			</div>
 
-		{% block scripts %}{% endblock %}
-	</body>
-</html>
+			{% block scripts %}{% endblock %}
+		</body>
+	</html>

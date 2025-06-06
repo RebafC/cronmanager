@@ -29,7 +29,32 @@ switch ($route) {
         require __DIR__ . '/../src/dashboard.php';
         break;
 
-    // more routes here (e.g., register, forgot, change)
+    case 'invite':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+        $auth->handleInvite();
+        break;
+
+    case 'register':
+        $auth->handleRegister();
+        break;
+
+    case 'logout':
+        session_destroy();
+        header('Location: /login');
+        break;
+
+    case 'forgot':
+        $auth->handleForgot();
+        break;
+
+    case 'reset':
+        $auth->handleReset();
+        break;
+
+        // more routes here (e.g., register, forgot, change)
     default:
         http_response_code(404);
         echo '404 Not Found';

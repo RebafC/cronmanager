@@ -1,0 +1,24 @@
+{% extends "base.twig" %}
+
+{% block title %}Create User Invite
+{% endblock %}
+
+{% block content %}
+	<h2>Create User Invitation</h2>
+
+	<form method="post">
+		<div class="form-group">
+			<label for="email">Email to invite:</label>
+			<input type="email" id="email" name="email" required>
+		</div>
+
+		<button type="submit">Generate Invite</button>
+	</form>
+
+	{% if invite_link %}
+		<div style="margin-top: 20px;">
+			<strong>Invite Link:</strong><br>
+			<code>{{ invite_link }}</code>
+		</div>
+	{% endif %}
+{% endblock %}
