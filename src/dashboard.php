@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use CronManager\CronManager;
+use CronManager\TwigFactory;
 
 $cronManager = new CronManager();
 $message = '';
@@ -85,9 +86,7 @@ $executions = $cronManager->getTaskExecutions(50);
 $stats = $cronManager->getTaskStatistics(30);
 $cronExport = $cronManager->exportCron();
 
-// Render with Twig
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates');
-$twig = new \Twig\Environment($loader, ['debug' => true, 'cache' => false]);
+$twig = TwigFactory::create();
 
 echo $twig->render('dashboard.twig', [
     'base_url' => BASE_URL,
