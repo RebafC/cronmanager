@@ -1,0 +1,32 @@
+<div id="add" class="tab-content">
+	<h2>Add New Task</h2>
+
+	<form method="post">
+		<input type="hidden" name="action" value="add">
+
+		<div class="form-group">
+			<label for="schedule">Cron Schedule:</label>
+			<input type="text" id="schedule" name="schedule" placeholder="0 0 * * *" required>
+			<div class="schedule-example">
+				<strong>Examples:</strong><br>
+				<span class="code">0 0 * * *</span>
+				- Daily at midnight<br>
+				<span class="code">0 */6 * * *</span>
+				- Every 6 hours<br>
+				<span class="code">*/15 * * * *</span>
+				- Every 15 minutes<br>
+				<span class="code">0 9 * * 1</span>
+				- Every Monday at 9 AM<br>
+				<span class="code">0 0 1 * *</span>
+				- First day of every month
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="command">Command:</label>
+			<input type="text" id="command" name="command" placeholder="/usr/bin/php /path/to/script.php" required>
+		</div>
+
+		<button type="submit">Add Task</button>
+	</form>
+</div>

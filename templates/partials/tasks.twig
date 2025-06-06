@@ -1,0 +1,70 @@
+<div id="tasks" class="tab-content active">
+	<h2>Current Tasks</h2>
+
+	{% if tasks is empty %}
+		<p>No cron tasks found.</p>
+	{% else %}
+		<table>
+			<thead>
+				<tr>
+					<th>Schedule</th>
+					<th>Command</th>
+					<th>Description</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for task in tasks %}
+					<tr>
+						<td>
+							<span class="code">{{ task.schedule }}</span>
+						</td>
+						<td>
+							<span class="code">{{ task.command }}</span>
+						</td>
+						<td>{{ task.description }}</td>
+						<td>
+							<div class="task-actions">
+								<button class="warning" onclick="editTask({{ task.id }}, '{{ task.schedule|e('js') }}', '{{ task.command|e('js') }}')">
+									✏️ Edit
+								</button>
+								<button type="button" class="execute" onclick="executeTask('{{ task.command|e('js') }}')">
+									▶️ Execute
+								</button>
+								<button type="button" class="danger" onclick="deleteTask({{ task.id }})">
+									❌ Delete
+								</button>
+							</div>
+						</td>
+					</tr>
+
+					<tr id="edit-{{ task.id }}" class="edit-form">
+						<td colspan="4">
+							<div style="padding: 10px; background-color: #f8f9fa; border-radius: 5px;">
+								<form onsubmit="return updateTask(this)">
+									<input type="hidden" name="action" value="update">
+									<input type="hidden" name="task_id" value="{{ task.id }}">
+
+									<div class="edit-form-row">
+										<div>
+											<label>Schedule:</label>
+											<input type="text" name="schedule" value="{{ task.schedule }}" required>
+										</div>
+										<div>
+											<label>Command:</label>
+											<input type="text" name="command" value="{{ task.command }}" required>
+										</div>
+										<div style="flex: 0 0 auto;">
+											<button type="submit">Update</button>
+											<button type="button" onclick="cancelEdit({{ task.id }})">Cancel</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+</div>

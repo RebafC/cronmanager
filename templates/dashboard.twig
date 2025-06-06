@@ -1,0 +1,120 @@
+{% extends 'base.twig' %}
+
+{% block extra_styles %}
+	<link rel="stylesheet" href="/assets/css/dashboard.css">
+{% endblock %}
+
+{% block content %}
+{% include 'partials/tasks.twig' %}
+{% include 'partials/add.twig' %}
+{% include 'partials/executions.twig' %}
+{% include 'partials/reports.twig' %}
+{% include 'partials/import.twig' %}
+{% include 'partials/logs.twig' %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function executeTask(command) {
+    if (!confirm(`Execute this command?\n\n${command}`)) return;
+
+    const payload = new FormData();
+    payload.append('action', 'execute');
+    payload.append('command', command);
+
+    fetch('', {
+        method: 'POST',
+        body: payload
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        document.body.innerHTML = doc.body.innerHTML;
+
+        // Automatically switch to the "Executions" tab after update
+        setTimeout(() => {
+            const executionsTab = document.querySelector('.tab[onclick*="executions"]');
+            if (executionsTab) executionsTab.click();
+        }, 50);
+    })
+    .catch(error => {
+        showFeedback('❌ Failed to execute.', 'error');
+        console.error(error);
+    });
+
+    return false;
+}
+
+function deleteTask(taskId) {
+    if (!confirm('Are you sure you want to delete this task?')) return;
+
+    const payload = new FormData();
+    payload.append('action', 'delete');
+    payload.append('task_id', taskId);
+
+    fetch('', {
+        method: 'POST',
+        body: payload
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        document.body.innerHTML = doc.body.innerHTML;
+    })
+    .catch(error => {
+        alert('Failed to delete task. Check console for details.');
+        console.error(error);
+    });
+}
+
+function updateTask(form) {
+    const row = form.closest('tr');
+    const taskId = form.querySelector('[name="task_id"]').value;
+
+    const payload = new FormData(form);
+
+    // Disable inputs during update
+    form.querySelectorAll('input, button').forEach(el => el.disabled = true);
+    row.style.opacity = 0.5;
+
+    fetch('', {
+        method: 'POST',
+        body: payload
+    })
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        document.body.innerHTML = doc.body.innerHTML;
+
+        // Show feedback
+        showFeedback('✏️ Task updated.');
+
+        // Optional: Scroll to updated row
+        const newRow = document.getElementById(`edit-${taskId}`);
+        if (newRow) {
+            setTimeout(() => newRow.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+    })
+    .catch(error => {
+        showFeedback('❌ Update failed.', 'error');
+        console.error(error);
+    });
+
+    return false;
+}
+
+function editTask(id, schedule, command) {
+    document.querySelectorAll('.edit-form').forEach(el => el.classList.remove('active'));
+    const editRow = document.getElementById('edit-' + id);
+    if (editRow) editRow.classList.add('active');
+}
+
+function cancelEdit(id) {
+    const editRow = document.getElementById('edit-' + id);
+    if (editRow) editRow.classList.remove('active');
+}
+</script>
+{% endblock %}

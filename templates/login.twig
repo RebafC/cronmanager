@@ -1,0 +1,32 @@
+{% extends "base.twig" %}
+
+{% block title %}Login | Cron Manager
+{% endblock %}
+
+{% block extra_styles %}
+	<link rel="stylesheet" href="/assets/css/login.css">
+{% endblock %}
+
+{% block content %}
+	<div class="login-container">
+		<h1>🔐 Login for Cron Manager</h1>
+
+		{% if login_attempted and not login_success %}
+			<div class="alert alert-danger">Invalid username or password</div>
+		{% endif %}
+
+		<form method="post">
+			<div class="form-group">
+				<label for="username">Username:</label>
+				<input type="text" id="username" name="username" required>
+			</div>
+
+			<div class="form-group">
+				<label for="password">Password:</label>
+				<input type="password" id="password" name="password" required>
+			</div>
+
+			<button type="submit" name="login">Login</button>
+		</form>
+	</div>
+{% endblock %}

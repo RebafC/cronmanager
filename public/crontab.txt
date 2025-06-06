@@ -1,0 +1,11 @@
+30 3 * * * php -f /home/cricketc/public_html/backup/backup-images.php
+7 7 * * * php -f /home/cricketc/public_html/backup/backup-cleanup.php
+*/5 * * * * php -f /home/cricketc/public_html/cron/mail_cycle.php
+*/5 * * * * php -f /home/cricketc/public_html/cron/jobq_cycle.php
+*/5 1 1 1 * php -f /home/cricketc/public_html/cron/test.php
+0 21 * 10,11,12,1,2,3 * php -f /home/cricketc/public_html/backup/swap-errorlog.php
+0 22 * 4,5,6,7,8,9 * php -f /home/cricketc/public_html/backup/swap-errorlog.php
+0 7 * * * php -f /home/cricketc/public_html/tools/filechanges.php >/dev/null 2>&1
+0 3 * * * php -f /home/cricketc/public_html/backup/database-structure.php
+0 * * * * php -f /home/cricketc/public_html/cron/count-sessions.php >/dev/null 2>&1
+0 0 * * * php -f /home/cricketc/public_html/cron/monitor.php

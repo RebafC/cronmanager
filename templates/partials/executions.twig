@@ -1,0 +1,60 @@
+<div id="executions" class="tab-content">
+	<h2>Task Executions</h2>
+
+	{% if executions is empty %}
+		<p>No execution history found.</p>
+	{% else %}
+		<table>
+			<thead>
+				<tr>
+					<th>Timestamp</th>
+					<th>Command</th>
+					<th>Status</th>
+					<th>Duration</th>
+					<th>Exit Code</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for execution in executions %}
+					<tr style="background-color: {{ execution.status == 'SUCCESS' ? '#d4edda' : '#f8d7da' }};">
+						<td>{{ execution.timestamp }}</td>
+						<td>
+							<span class="code">{{ execution.command|length > 50 ? execution.command|slice(0, 50) ~ '...' : execution.command }}</span>
+						</td>
+						<td>
+							<span style="font-weight: bold; color: {{ execution.status == 'SUCCESS' ? '#155724' : '#721c24' }};">
+								{{ execution.status }}
+							</span>
+						</td>
+						<td>{{ execution.duration }}s</td>
+						<td>{{ execution.exit_code }}</td>
+						<td>
+							<button onclick="showExecutionDetails({{ loop.index0 }})" style="padding: 4px 8px; font-size: 12px;">Details</button>
+						</td>
+					</tr>
+					<tr id="details-{{ loop.index0 }}" style="display: none;">
+						<td colspan="6" style="background-color: #f8f9fa; padding: 15px;">
+							<div>
+								<strong>Full Command:</strong><br>
+								<span class="code">{{ execution.command }}</span>
+							</div>
+							{% if execution.output %}
+								<div style="margin-top: 10px;">
+									<strong>Output:</strong><br>
+									<pre style="background: #e9ecef; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto;">{{ execution.output }}</pre>
+								</div>
+							{% endif %}
+							{% if execution.error %}
+								<div style="margin-top: 10px;">
+									<strong>Error:</strong><br>
+									<pre style="background: #f8d7da; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto;">{{ execution.error }}</pre>
+								</div>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+</div>

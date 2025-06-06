@@ -1,0 +1,30 @@
+{# templates/base.twig #}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Cron Task Manager
+			{% endblock %}
+		</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="/assets/css/style.css">
+    {% block extra_styles %}{% endblock %}
+	</head>
+	<body>
+		<div class="container">
+			<h1>🕒 Cron Task Manager</h1>
+
+			{% if message %}
+				<div class="alert alert-success">{{ message }}</div>
+			{% endif %}
+			{% if error %}
+				<div class="alert alert-error">{{ error }}</div>
+			{% endif %}
+
+			{% block content %}{% endblock %}
+		</div>
+
+		{% block scripts %}{% endblock %}
+	</body>
+</html>

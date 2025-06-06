@@ -1,0 +1,13 @@
+<div id="logs" class="tab-content">
+	<h2>Activity Logs</h2>
+
+	{% if logs is empty %}
+		<p>No activity logs found.</p>
+	{% else %}
+		<div class="logs">
+			{% for log in logs %}
+				{{ log }}<br>
+			{% endfor %}
+		</div>
+	{% endif %}
+</div>

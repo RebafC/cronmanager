@@ -1,0 +1,20 @@
+<div id="import" class="tab-content">
+	<h2>Import/Export Cron</h2>
+
+	<div style="margin-bottom: 30px;">
+		<h3>Export Current Cron</h3>
+		<textarea readonly style="height: 150px;">{{ cron_export }}</textarea>
+	</div>
+
+	<div>
+		<h3>Import Cron Content</h3>
+		<form method="post">
+			<input type="hidden" name="action" value="import">
+			<div class="form-group">
+				<label for="cron_content">Paste cron content:</label>
+				<textarea id="cron_content" name="cron_content" placeholder="0 0 * * * /path/to/command&#10;*/5 * * * * /another/command" style="height: 150px;"></textarea>
+			</div>
+			<button type="submit" onclick="return confirm('This will replace all current tasks. Continue?')">Import</button>
+		</form>
+	</div>
+</div>

@@ -1,0 +1,18 @@
+// example_crontab.txt (for testing on Windows)
+# Example crontab content for testing
+# This file simulates a real crontab export
+
+# Run backup every day at 2 AM
+0 2 * * * /usr/local/bin/backup.sh
+
+# Clear temp files every hour
+0 * * * * /usr/bin/find /tmp -name "temp_*" -delete
+
+# Send weekly report every Sunday at 9 AM
+0 9 * * 0 /usr/local/bin/weekly-report.php
+
+# Check disk space every 30 minutes
+*/30 * * * * /usr/local/bin/check-diskspace.sh
+
+# Update database every 6 hours
+0 */6 * * * /usr/bin/php /var/www/html/update-db.php

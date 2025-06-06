@@ -1,0 +1,24 @@
+# Composer dependencies
+/vendor/
+
+# SQLite database
+/data/*.db
+
+# IDE/editor files
+*.log
+*.swp
+*.swo
+*.bak
+*.tmp
+*.DS_Store
+.vscode/
+.idea/
+
+# OS-specific junk
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Environment/config
+.env
+config.local.php
