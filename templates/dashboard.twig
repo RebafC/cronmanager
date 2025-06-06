@@ -18,6 +18,8 @@
 function executeTask(command) {
     if (!confirm(`Execute this command?\n\n${command}`)) return;
 
+    document.getElementById('spinner').style.display = 'flex';
+
     const payload = new FormData();
     payload.append('action', 'execute');
     payload.append('command', command);
@@ -31,6 +33,7 @@ function executeTask(command) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         document.body.innerHTML = doc.body.innerHTML;
+        document.getElementById('spinner').style.display = 'none';
 
         // Automatically switch to the "Executions" tab after update
         setTimeout(() => {
@@ -49,6 +52,8 @@ function executeTask(command) {
 function deleteTask(taskId) {
     if (!confirm('Are you sure you want to delete this task?')) return;
 
+    document.getElementById('spinner').style.display = 'flex';
+
     const payload = new FormData();
     payload.append('action', 'delete');
     payload.append('task_id', taskId);
@@ -62,6 +67,7 @@ function deleteTask(taskId) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         document.body.innerHTML = doc.body.innerHTML;
+        document.getElementById('spinner').style.display = 'none';
     })
     .catch(error => {
         alert('Failed to delete task. Check console for details.');
@@ -74,6 +80,8 @@ function updateTask(form) {
     const taskId = form.querySelector('[name="task_id"]').value;
 
     const payload = new FormData(form);
+
+    document.getElementById('spinner').style.display = 'flex';
 
     // Disable inputs during update
     form.querySelectorAll('input, button').forEach(el => el.disabled = true);
@@ -88,6 +96,7 @@ function updateTask(form) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         document.body.innerHTML = doc.body.innerHTML;
+        document.getElementById('spinner').style.display = 'none';
 
         // Show feedback
         showFeedback('✏️ Task updated.');
@@ -116,5 +125,26 @@ function cancelEdit(id) {
     const editRow = document.getElementById('edit-' + id);
     if (editRow) editRow.classList.remove('active');
 }
+
+function showFeedback(message, type = 'success') {
+    const feedback = document.getElementById('feedback');
+    const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️'
+    };
+
+    const icon = icons[type] || '';
+    feedback.innerHTML = `${icon} ${message}`;
+    feedback.className = `alert alert-${type} show`;
+
+    setTimeout(() => {
+        feedback.classList.remove('show');
+        feedback.innerHTML = '';
+    }, 4000);
+}
+</script>
+{% endblock %}
 </script>
 {% endblock %}

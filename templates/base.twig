@@ -11,6 +11,9 @@
 		<link rel="stylesheet" href="/assets/css/style.css"> {% block extra_styles %}{% endblock %}
 		</head>
 		<body>
+      <div id="spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+      </div>
 			<div class="container">
 				{% if session.username %}
 					<div style="float: right;">👤 {{ session.username }}
@@ -19,6 +22,7 @@
 				{% endif %}
 				<h1>🕒 Cron Task Manager</h1>
 
+        <div id="feedback" class="alert" style="display: block;"></div>
 				{% if message %}
 					<div class="alert alert-success">{{ message }}</div>
 				{% endif %}

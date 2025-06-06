@@ -12,7 +12,7 @@
 		<h1>🔐 Login for Cron Manager</h1>
 
 		{% if login_attempted and not login_success %}
-			<div class="alert alert-danger">Invalid username or password</div>
+			<div class="alert alert-error">Invalid username or password</div>
 		{% endif %}
 
 		<form method="post">
