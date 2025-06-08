@@ -38,6 +38,7 @@ class Auth
                 `used` INTEGER DEFAULT 0
             );
             SQL
+            // ALTER TABLE `users` ADD COLUMN `active` INTEGER DEFAULT 1;
         );
         //  $this->createUser('admin', 'secret');
     }
@@ -227,7 +228,6 @@ class Auth
                             header('Location: /dashboard');
                             exit;
                         }
-
                     }
                 }
             } else {
@@ -365,6 +365,39 @@ class Auth
             'error' => $error,
             'show_form' => $showForm
         ]);
+    }
+    public function handleUserList(): void
+    {
+        $twig = TwigFactory::create();
+
+        $stmt = $this->pdo->query("SELECT `id`, `username`, `active` FROM `users` ORDER BY `id`");
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo $twig->render('users.twig', [
+            'users' => $users,
+            'message' => $_GET['message'] ?? '',
+        ]);
+    }
+    public function handleUserDelete(): void
+    {
+        $id = $_POST['id'] ?? null;
+        if ($id && $id != $_SESSION['user_id']) {
+            $stmt = $this->pdo->prepare("DELETE FROM `users` WHERE `id` = :id");
+            $stmt->execute(['id' => $id]);
+        }
+        header('Location: /users?message=User deleted');
+        exit;
+    }
+
+    public function handleUserToggle(): void
+    {
+        $id = $_POST['id'] ?? null;
+        if ($id && $id != $_SESSION['user_id']) {
+            $stmt = $this->pdo->prepare("UPDATE `users` SET `active` = NOT `active` WHERE `id` = :id");
+            $stmt->execute(['id' => $id]);
+        }
+        header('Location: /users?message=User status updated');
+        exit;
     }
 
 }

@@ -33,16 +33,21 @@ class CronManager
         }
     }
 
-    public function getCronTasks(): array
+    public function getCronTasks(bool $fromSystem = false): array
     {
-        $content = file_get_contents($this->cronFile);
-        $lines = array_filter(explode("\n", $content), fn($line) => !empty(trim($line)) && !str_starts_with(trim($line), '#'));
+        if ($fromSystem) {
+            $content = $this->readSystemCrontab();
+        } else {
+            $content = file_exists($this->cronFile) ? file_get_contents($this->cronFile) : '';
+        }
 
+        $lines = explode("\n", $content);
         $tasks = [];
-        foreach ($lines as $index => $line) {
-            $task = $this->parseCronLine($line, $index);
-            if ($task) {
-                $tasks[] = $task;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line !== '' && $parsed = $this->parseCronLine($line)) {
+                $tasks[] = $parsed;
             }
         }
 
@@ -116,7 +121,7 @@ class CronManager
 
     public function addTask(string $schedule, string $command): bool
     {
-        $cronLine = "{$schedule} {$command}\n";
+        $cronLine = "{$schedule} {$command} # cronmanager\n";
 
         if (file_put_contents($this->cronFile, $cronLine, FILE_APPEND | LOCK_EX) !== false) {
             $this->logTask('ADDED', $cronLine);
@@ -156,7 +161,7 @@ class CronManager
         }
 
         $oldTask = $tasks[$taskId];
-        $newTask = "{$schedule} {$command}";
+        $newTask = "{$schedule} {$command} # cronmanager";
         $tasks[$taskId] = $newTask;
 
         if (file_put_contents($this->cronFile, implode("\n", $tasks) . "\n", LOCK_EX) !== false) {
@@ -542,8 +547,8 @@ BASH;
                 return false;
             }
             return is_numeric($parts[0]) && is_numeric($parts[1]) &&
-                   (int)$parts[0] >= $min && (int)$parts[1] <= $max &&
-                   (int)$parts[0] <= (int)$parts[1];
+                    (int)$parts[0] >= $min && (int)$parts[1] <= $max &&
+                    (int)$parts[0] <= (int)$parts[1];
         }
 
         if (str_contains($field, ',')) {
@@ -558,4 +563,25 @@ BASH;
 
         return is_numeric($field) && (int)$field >= $min && (int)$field <= $max;
     }
+
+    public function readSystemCrontab(): string
+    {
+        return trim(shell_exec('crontab -l 2>/dev/null'));
+    }
+
+    public function syncFromSystemCrontab(): bool
+    {
+        $content = $this->readSystemCrontab();
+
+        // Filter only cronmanager-owned lines
+        $lines = explode("\n", $content);
+        $ownedLines = array_filter(
+            $lines,
+            fn ($line) =>
+            str_contains(trim($line), '# cronmanager')
+        );
+
+        return $this->importCron(implode("\n", $ownedLines));
+    }
+
 }

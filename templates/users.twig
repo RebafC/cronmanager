@@ -1,0 +1,55 @@
+{% extends "base.twig" %}
+
+{% block title %}User Management
+{% endblock %}
+
+{% block content %}
+	<h2>User Management</h2>
+
+	{% if message %}
+		<div class="alert alert-success show">{{ message }}</div>
+	{% endif %}
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Email</th>
+				<th>Status</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr>
+					<td>{{ user.id }}</td>
+					<td>{{ user.username }}</td>
+					<td>
+						{% if user.active %}
+							Active
+						{% else %}
+							Blocked
+						{% endif %}
+					</td>
+					<td>
+						{% if user.id != session.user_id %}
+							<form method="post" action="/toggle-user" style="display:inline;">
+								<input type="hidden" name="id" value="{{ user.id }}">
+								<button class="warning" type="submit">
+									{% if user.active %}Block{% else %}Unblock
+									{% endif %}
+								</button>
+							</form>
+							<form method="post" action="/delete-user" onsubmit="return confirm('Delete this user?');" style="display:inline;">
+								<input type="hidden" name="id" value="{{ user.id }}">
+								<button class="danger" type="submit">Delete</button>
+							</form>
+						{% else %}
+							<em>Current user</em>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

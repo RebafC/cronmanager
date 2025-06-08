@@ -80,7 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Prepare data
-$tasks = $cronManager->getCronTasks();
+$fromSystem = isset($_GET['source']) && $_GET['source'] === 'system';
+$tasks = $cronManager->getCronTasks($fromSystem);
 $logs = $cronManager->getTaskLogs(20);
 $executions = $cronManager->getTaskExecutions(50);
 $stats = $cronManager->getTaskStatistics(30);
@@ -90,6 +91,8 @@ $twig = TwigFactory::create();
 
 echo $twig->render('dashboard.twig', [
     'base_url' => BASE_URL,
+    'from_system' => $fromSystem,
+    'username' => $_SESSION['username'] ?? null,
     'message' => $message,
     'error' => $error,
     'tasks' => $tasks,
@@ -97,4 +100,5 @@ echo $twig->render('dashboard.twig', [
     'executions' => $executions,
     'stats' => $stats,
     'cron_export' => $cronExport,
+    'synced' => isset($_GET['synced']) && $_GET['synced'] == 1,
 ]);

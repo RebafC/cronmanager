@@ -66,5 +66,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
+    {% if from_system %}
+    <div class="notice">Showing live crontab contents (read-only mode). You may sync these into your task list.</div>
+{% endif %}
 	{% endif %}
 </div>

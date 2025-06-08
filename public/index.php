@@ -54,6 +54,41 @@ switch ($route) {
         $auth->handleReset();
         break;
 
+    case 'sync-crontab':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $cronManager->syncFromSystemCrontab();
+        header('Location: /dashboard?source=file&synced=1');
+        exit;
+
+    case 'users':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+        $auth->handleUserList();
+        break;
+
+    case 'delete-user':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+        $auth->handleUserDelete();
+        break;
+
+    case 'toggle-user':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+        $auth->handleUserToggle();
+        break;
+
+
         // more routes here (e.g., register, forgot, change)
     default:
         http_response_code(404);

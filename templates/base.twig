@@ -17,6 +17,7 @@
 			<div class="container">
 				{% if session.username %}
 					<div style="float: right;">👤 {{ session.username }}
+            | <a href="/users">Users</a>
             | <a href="/invite">Invite</a>
             | <a href="/logout">Logout</a></div>
 				{% endif %}
