@@ -5,6 +5,9 @@
 /data/*.db
 /data/mail.log
 
+# Other data
+/crontab.txt
+
 # IDE/editor files
 *.log
 *.swp
