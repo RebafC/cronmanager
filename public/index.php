@@ -28,25 +28,7 @@ switch ($route) {
             header('Location: /login');
             exit;
         }
-
         require __DIR__ . '/../src/dashboard.php';
-        $fromSystem = isset($_GET['source']) && $_GET['source'] === 'system';
-
-        if ($fromSystem) {
-            $tasks = $cronManager->getTaskDifferences(); // ← this is the safe spot
-        } else {
-            $tasks = $cronManager->getCronTasks(false);
-        }
-
-        echo $twig->render('dashboard.twig', [
-            'tasks' => $tasks,
-            'from_system' => $fromSystem,
-            'username' => $_SESSION['username'] ?? null,
-            'message' => $_GET['message'] ?? '',
-            'synced' => isset($_GET['synced']),
-            'applied' => isset($_GET['applied']),
-            'crontab_available' => $cronManager->systemCrontabAvailable(),
-        ]);
         break;
 
     case 'invite':

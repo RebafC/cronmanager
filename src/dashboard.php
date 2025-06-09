@@ -81,7 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Prepare data
 $fromSystem = isset($_GET['source']) && $_GET['source'] === 'system';
-$tasks = $cronManager->getCronTasks($fromSystem);
+if ($fromSystem) {
+    $tasks = $cronManager->getTaskDifferences(); // ← this is the safe spot
+} else {
+    $tasks = $cronManager->getCronTasks(false);
+}
 $logs = $cronManager->getTaskLogs(20);
 $executions = $cronManager->getTaskExecutions(50);
 $stats = $cronManager->getTaskStatistics(30);
