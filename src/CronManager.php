@@ -127,7 +127,13 @@ class CronManager
     {
         // Trim any accidental newlines
         $line = rtrim($schedule . ' ' . $command);
-        if (!str_contains($line, '# cronmanager')) {
+        if (
+            // skip comments
+            !str_starts_with($line, '#') &&
+            // looks like cron timing
+            preg_match('/^\S+\s+\S+\s+\S+\s+\S+\s+\S+/', $line) &&
+            !str_contains($line, '# cronmanager')
+        ) {
             $line .= ' # cronmanager';
         }
         $cronLine = $line . PHP_EOL;
@@ -610,7 +616,13 @@ BASH;
             }
 
             // Append marker if not already present
-            if (!str_contains($line, '# cronmanager')) {
+            if (
+                // skip comments
+                !str_starts_with($line, '#') &&
+                // looks like cron timing
+                preg_match('/^\S+\s+\S+\s+\S+\s+\S+\s+\S+/', $line) &&
+                !str_contains($line, '# cronmanager')
+            ) {
                 $line .= ' # cronmanager';
             }
 
