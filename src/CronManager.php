@@ -198,19 +198,10 @@ class CronManager
         return false;
     }
 
-    public function updateSystemCron(): bool
+    public function updateSystemCron(): void
     {
         $file = $this->cronFile;
-
-        // Optional: log what's about to be written
-        error_log("Applying cron from file: $file" . PHP_EOL, 3, 'mylog.txt');
-        error_log("Contents:\n" . file_get_contents($file) . PHP_EOL, 3, 'mylog.txt');
-
         $output = shell_exec("crontab " . escapeshellarg($file) . " 2>&1");
-
-        error_log("crontab output: $output" . PHP_EOL, 3, 'mylog.txt');
-
-        return true; // for now
     }
 
     public function logTask(string $action, string $details): void
