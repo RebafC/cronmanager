@@ -75,8 +75,8 @@
 			<div class="notice">Showing live crontab contents (read-only mode). You may sync these into your task list.</div>
 		{% else %}
 			<h3 id="new-task">Create New Task</h3>
-			<form method="post" action="/dashboard?action=add">
-				<input type="hidden" name="action" value="create">
+			<form method="post" action="/dashboard">
+				<input type="hidden" name="action" value="add">
 				<div class="form-group">
 					<label for="schedule">Schedule (e.g. */5 * * * *):</label>
 					<input type="text" name="schedule" id="schedule" required>
