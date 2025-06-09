@@ -125,7 +125,18 @@ class CronManager
 
     public function addTask(string $schedule, string $command): bool
     {
-        $cronLine = "{$schedule} {$command} # cronmanager\n";
+        // Trim any accidental newlines
+        $line = rtrim($schedule . ' ' . $command);
+        if (!str_contains($line, '# cronmanager')) {
+            $line .= ' # cronmanager';
+        }
+        $cronLine = $line . PHP_EOL;
+
+        $existing = file_get_contents($this->cronFile);
+        if (strlen($existing) > 0 && !str_ends_with($existing, "\n")) {
+            // Add newline if file doesn’t end cleanly
+            $cronLine = "\n" . $cronLine;
+        }
 
         if (file_put_contents($this->cronFile, $cronLine, FILE_APPEND | LOCK_EX) !== false) {
             $this->logTask('ADDED', $cronLine);
@@ -165,7 +176,11 @@ class CronManager
         }
 
         $oldTask = $tasks[$taskId];
-        $newTask = "{$schedule} {$command} # cronmanager";
+
+        $newTask = rtrim($schedule . ' ' . $command);
+        if (!str_contains($line, '# cronmanager')) {
+            $newTask .= ' # cronmanager';
+        }
         $tasks[$taskId] = $newTask;
 
         if (file_put_contents($this->cronFile, implode("\n", $tasks) . "\n", LOCK_EX) !== false) {
@@ -608,7 +623,7 @@ BASH;
         $fileTasks = $this->getCronTasks(false);
         $systemTasks = $this->getCronTasks(true);
 
-        $fileCommands = array_map(fn($t) => $t['command'], $fileTasks);
+        $fileCommands = array_map(fn ($t) => $t['command'], $fileTasks);
 
         foreach ($systemTasks as &$task) {
             $task['status'] = in_array($task['command'], $fileCommands) ? 'known' : 'untracked';
