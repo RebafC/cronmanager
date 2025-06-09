@@ -101,5 +101,6 @@ echo $twig->render('dashboard.twig', [
     'executions' => $executions,
     'stats' => $stats,
     'cron_export' => $cronExport,
+    'applied' => isset($_GET['applied']) && $_GET['applied'] == 1,
     'synced' => isset($_GET['synced']) && $_GET['synced'] == 1,
 ]);

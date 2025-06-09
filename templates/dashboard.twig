@@ -29,10 +29,19 @@
     </div>
 {% endif %}
 
+{% if applied %}
+    <div class="alert alert-success show">Crontab successfully updated from app-managed task list.</div>
+{% endif %}
+
 {% if synced %}
     <div class="alert alert-success show">System crontab synced successfully.</div>
 {% endif %}
 
+{% if not from_system and crontab_available %}
+    <form method="post" action="/apply-crontab">
+        <button type="submit" class="success">Apply to System Crontab</button>
+    </form>
+{% endif %}
 
 {% include 'partials/tasks.twig' %}
 {% include 'partials/add.twig' %}

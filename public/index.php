@@ -66,6 +66,16 @@ switch ($route) {
         header('Location: /dashboard?source=file&synced=1');
         exit;
 
+    case 'apply-crontab':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $cronManager->updateSystemCron(); // uses your cronFile
+        header('Location: /dashboard?source=system&applied=1');
+        exit;
+
     case 'users':
         if (!$auth->check()) {
             header('Location: /login');
