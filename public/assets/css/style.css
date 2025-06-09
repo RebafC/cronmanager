@@ -108,6 +108,9 @@ table {
   /* Add this line */
 }
 
+tr.unknown { background-color: #fff3cd; } /* yellow */
+tr.added { background-color: #d4edda; } /* green */
+
 th,
 td {
   padding: 12px;

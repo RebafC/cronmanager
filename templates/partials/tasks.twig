@@ -15,7 +15,7 @@
 			</thead>
 			<tbody>
 				{% for task in tasks %}
-					<tr>
+					<tr class="{{ task.status }}">
 						<td>
 							<span class="code">{{ task.schedule }}</span>
 						</td>
@@ -24,17 +24,21 @@
 						</td>
 						<td>{{ task.description }}</td>
 						<td>
-							<div class="task-actions">
-								<button class="warning" onclick="editTask({{ task.id }}, '{{ task.schedule|e('js') }}', '{{ task.command|e('js') }}')">
-									✏️ Edit
-								</button>
-								<button type="button" class="execute" onclick="executeTask('{{ task.command|e('js') }}')">
-									▶️ Execute
-								</button>
-								<button type="button" class="danger" onclick="deleteTask({{ task.id }})">
-									❌ Delete
-								</button>
-							</div>
+							{% if from_system %}
+								<em class="readonly">System crontab (read-only)</em>
+							{% else %}
+								<div class="task-actions">
+									<button class="warning" onclick="editTask({{ task.id }}, '{{ task.schedule|e('js') }}', '{{ task.command|e('js') }}')">
+										✏️ Edit
+									</button>
+									<button type="button" class="execute" onclick="executeTask('{{ task.command|e('js') }}')">
+										▶️ Execute
+									</button>
+									<button type="button" class="danger" onclick="deleteTask({{ task.id }})">
+										❌ Delete
+									</button>
+								</div>
+							{% endif %}
 						</td>
 					</tr>
 
@@ -67,22 +71,22 @@
 			</tbody>
 		</table>
 
-		<h3 id="new-task">Create New Task</h3>
-		<form method="post" action="/dashboard">
-			<input type="hidden" name="action" value="create">
-			<div class="form-group">
-				<label for="schedule">Schedule (e.g. */5 * * * *):</label>
-				<input type="text" name="schedule" id="schedule" required>
-			</div>
-			<div class="form-group">
-				<label for="command">Command to run:</label>
-				<input type="text" name="command" id="command" required>
-			</div>
-			<button type="submit" class="success">Save Task</button>
-		</form>
-
 		{% if from_system %}
 			<div class="notice">Showing live crontab contents (read-only mode). You may sync these into your task list.</div>
+		{% else %}
+			<h3 id="new-task">Create New Task</h3>
+			<form method="post" action="/dashboard">
+				<input type="hidden" name="action" value="create">
+				<div class="form-group">
+					<label for="schedule">Schedule (e.g. */5 * * * *):</label>
+					<input type="text" name="schedule" id="schedule" required>
+				</div>
+				<div class="form-group">
+					<label for="command">Command to run:</label>
+					<input type="text" name="command" id="command" required>
+				</div>
+				<button type="submit" class="success">Save Task</button>
+			</form>
 		{% endif %}
 	{% endif %}
 </div>

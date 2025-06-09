@@ -66,6 +66,13 @@ class CronManager
             return null;
         }
 
+        $known = $this->getCronTasks(false);
+        $live = $this->getCronTasks(true);
+
+        foreach ($live as $task) {
+            $task['status'] = in_array($task['command'], array_column($known, 'command')) ? 'known' : 'unknown';
+        }
+
         return [
             'id' => $index,
             'minute' => $parts[0],
