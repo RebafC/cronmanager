@@ -11,6 +11,7 @@ session_start();
 $route = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 $auth = new Auth();
+$cronManager = new CronManager();
 
 switch ($route) {
     case '':
@@ -61,7 +62,6 @@ switch ($route) {
             exit;
         }
 
-        $cronManager = new CronManager();
         $cronManager->syncFromSystemCrontab();
         header('Location: /dashboard?source=file&synced=1');
         exit;
