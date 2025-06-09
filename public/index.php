@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config.php';
 
 use CronManager\Auth;
+use CronManager\CronManager;
 
 session_start();
 
@@ -60,6 +61,7 @@ switch ($route) {
             exit;
         }
 
+        $cronManager = new CronManager();
         $cronManager->syncFromSystemCrontab();
         header('Location: /dashboard?source=file&synced=1');
         exit;
