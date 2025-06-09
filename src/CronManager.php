@@ -66,7 +66,7 @@ class CronManager
             return null;
         }
 
-        foreach ($live as $task) {
+        foreach ($line as $task) {
             $task['status'] = in_array($task['command'], array_column($known, 'command')) ? 'known' : 'unknown';
         }
 
@@ -192,12 +192,19 @@ class CronManager
         return false;
     }
 
-    public function updateSystemCron(): void
+    public function updateSystemCron(): bool
     {
-        if (!$this->isWindows) {
-            file_put_contents('../tmp/cronmanager_backup_' . date('Ymd_His') . '.cron', $this->readSystemCrontab());
-            exec("crontab {$this->cronFile}");
-        }
+        $file = $this->cronFile;
+
+        // Optional: log what's about to be written
+        error_log("Applying cron from file: $file" . PHP_EOL, 3, 'mylog.txt');
+        error_log("Contents:\n" . file_get_contents($file) . PHP_EOL, 3, 'mylog.txt');
+
+        $output = shell_exec("crontab " . escapeshellarg($file) . " 2>&1");
+
+        error_log("crontab output: $output" . PHP_EOL, 3, 'mylog.txt');
+
+        return true; // for now
     }
 
     public function logTask(string $action, string $details): void
