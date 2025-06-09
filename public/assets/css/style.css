@@ -110,6 +110,7 @@ table {
 
 tr.unknown { background-color: #fff3cd; } /* yellow */
 tr.added { background-color: #d4edda; } /* green */
+tr.untracked {background-color: #fff3cd; /* yellow */}
 
 th,
 td {

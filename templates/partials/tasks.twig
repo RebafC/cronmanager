@@ -15,7 +15,7 @@
 			</thead>
 			<tbody>
 				{% for task in tasks %}
-					<tr class="{{ task.status }}">
+					<tr class="{{ task.status ?? '' }}">
 						<td>
 							<span class="code">{{ task.schedule }}</span>
 						</td>

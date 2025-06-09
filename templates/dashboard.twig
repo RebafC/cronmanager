@@ -182,5 +182,20 @@ function showFeedback(message, type = 'success') {
         feedback.innerHTML = '';
     }, 4000);
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.querySelector('input[name="command"]');
+    const limit = 512;
+    const warnThreshold = 502; // 10 chars before limit
+
+    if (input) {
+        input.addEventListener('input', function () {
+            if (input.value.length >= warnThreshold) {
+                input.style.backgroundColor = '#fff3cd'; // light yellow
+            } else {
+                input.style.backgroundColor = '';
+            }
+        });
+    }
+});
 </script>
 {% endblock %}

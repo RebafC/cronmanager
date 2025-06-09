@@ -41,6 +41,13 @@ class CronManager
             $content = file_exists($this->cronFile) ? file_get_contents($this->cronFile) : '';
         }
 
+        if (!is_string($content)) {
+            error_log('CronManager: Expected string in $content but got ' . gettype($content));
+            $content = '';
+        } elseif (strlen($content) > 100000) {
+            error_log('CronManager: $content is unusually large (' . strlen($content) . ' bytes)');
+        }
+
         $lines = explode("\n", $content);
         $tasks = [];
 
