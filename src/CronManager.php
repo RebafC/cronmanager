@@ -16,7 +16,7 @@ class CronManager
     public function __construct(string $cronFile = '', string $logFile = 'cron_tasks.log')
     {
         $this->isWindows = PHP_OS_FAMILY === 'Windows';
-        $this->cronFile = $cronFile ?: ($this->isWindows ? 'crontab.txt' : '/tmp/crontab_backup');
+        $this->cronFile = $cronFile ?: ($this->isWindows ? 'crontab.txt' : '../data/crontab.txt');
         $this->logFile = $logFile;
 
         $this->initializeFiles();
