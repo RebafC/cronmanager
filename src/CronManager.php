@@ -178,7 +178,7 @@ class CronManager
         $oldTask = $tasks[$taskId];
 
         $newTask = rtrim($schedule . ' ' . $command);
-        if (!str_contains($line, '# cronmanager')) {
+        if (!str_contains($newTask, '# cronmanager')) {
             $newTask .= ' # cronmanager';
         }
         $tasks[$taskId] = $newTask;
