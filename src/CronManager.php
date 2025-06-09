@@ -573,13 +573,22 @@ BASH;
     {
         $content = $this->readSystemCrontab();
 
-        // Filter only cronmanager-owned lines
         $lines = explode("\n", $content);
-        $ownedLines = array_filter(
-            $lines,
-            fn ($line) =>
-            str_contains(trim($line), '# cronmanager')
-        );
+        $ownedLines = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) {
+                continue;
+            }
+
+            // Append marker if not already present
+            if (!str_contains($line, '# cronmanager')) {
+                $line .= ' # cronmanager';
+            }
+
+            $ownedLines[] = $line;
+        }
 
         return $this->importCron(implode("\n", $ownedLines));
     }
