@@ -72,7 +72,8 @@ switch ($route) {
             exit;
         }
 
-        $cronManager->updateSystemCron(); // uses your cronFile
+        // uses your cronFile
+        $cronManager->updateSystemCron();
         header('Location: /dashboard?source=system&applied=1');
         exit;
 

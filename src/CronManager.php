@@ -192,7 +192,7 @@ class CronManager
         return false;
     }
 
-    private function updateSystemCron(): void
+    public function updateSystemCron(): void
     {
         if (!$this->isWindows) {
             file_put_contents('../tmp/cronmanager_backup_' . date('Ymd_His') . '.cron', $this->readSystemCrontab());
