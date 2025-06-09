@@ -41,13 +41,6 @@ class CronManager
             $content = file_exists($this->cronFile) ? file_get_contents($this->cronFile) : '';
         }
 
-        if (!is_string($content)) {
-            error_log('CronManager: Expected string in $content but got ' . gettype($content));
-            $content = '';
-        } elseif (strlen($content) > 100000) {
-            error_log('CronManager: $content is unusually large (' . strlen($content) . ' bytes)');
-        }
-
         $lines = explode("\n", $content);
         $tasks = [];
 
@@ -72,9 +65,6 @@ class CronManager
         if (count($parts) < 6) {
             return null;
         }
-
-        $known = $this->getCronTasks(false);
-        $live = $this->getCronTasks(true);
 
         foreach ($live as $task) {
             $task['status'] = in_array($task['command'], array_column($known, 'command')) ? 'known' : 'unknown';
@@ -611,5 +601,19 @@ BASH;
     public function systemCrontabAvailable(): bool
     {
         return !$this->isWindows && trim(shell_exec('which crontab')) !== '';
+    }
+
+    public function getTaskDifferences(): array
+    {
+        $fileTasks = $this->getCronTasks(false);
+        $systemTasks = $this->getCronTasks(true);
+
+        $fileCommands = array_map(fn($t) => $t['command'], $fileTasks);
+
+        foreach ($systemTasks as &$task) {
+            $task['status'] = in_array($task['command'], $fileCommands) ? 'known' : 'untracked';
+        }
+
+        return $systemTasks;
     }
 }
