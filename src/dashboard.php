@@ -92,6 +92,7 @@ $twig = TwigFactory::create();
 echo $twig->render('dashboard.twig', [
     'base_url' => BASE_URL,
     'from_system' => $fromSystem,
+    'crontab_available' => $cronManager->systemCrontabAvailable(),
     'username' => $_SESSION['username'] ?? null,
     'message' => $message,
     'error' => $error,

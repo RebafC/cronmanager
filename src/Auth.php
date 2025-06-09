@@ -13,34 +13,8 @@ class Auth
 
     public function __construct()
     {
-        $dbase = __DIR__ . '/../data/users.db';
-        $this->pdo = new PDO('sqlite:' . $dbase);
+        $this->pdo = new PDO('sqlite:' . DBASE);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->init();
-    }
-
-    private function init(): void
-    {
-        $this->pdo->exec(
-            <<<SQL
-            CREATE TABLE IF NOT EXISTS `users` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `username` TEXT UNIQUE NOT NULL,
-                `password_hash` TEXT NOT NULL,
-                `created_at` TEXT DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS `password_resets` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `email` TEXT NOT NULL,
-                `token` TEXT NOT NULL,
-                `type` TEXT NOT NULL, -- 'invite' or 'reset'
-                `expires_at` TEXT,
-                `used` INTEGER DEFAULT 0
-            );
-            SQL
-            // ALTER TABLE `users` ADD COLUMN `active` INTEGER DEFAULT 1;
-        );
-        //  $this->createUser('admin', 'secret');
     }
 
     public function login(string $username, string $password): bool

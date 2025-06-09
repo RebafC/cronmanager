@@ -51,31 +51,6 @@
   display: block;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  table-layout: auto;
-  /* Add this line */
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #555;
-}
-
-tr:hover {
-  background-color: #f8f9fa;
-}
-
 .task-actions {
   display: flex;
   gap: 10px;

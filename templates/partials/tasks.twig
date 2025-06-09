@@ -66,8 +66,23 @@
 				{% endfor %}
 			</tbody>
 		</table>
-    {% if from_system %}
-    <div class="notice">Showing live crontab contents (read-only mode). You may sync these into your task list.</div>
-{% endif %}
+
+		<h3 id="new-task">Create New Task</h3>
+		<form method="post" action="/dashboard">
+			<input type="hidden" name="action" value="create">
+			<div class="form-group">
+				<label for="schedule">Schedule (e.g. */5 * * * *):</label>
+				<input type="text" name="schedule" id="schedule" required>
+			</div>
+			<div class="form-group">
+				<label for="command">Command to run:</label>
+				<input type="text" name="command" id="command" required>
+			</div>
+			<button type="submit" class="success">Save Task</button>
+		</form>
+
+		{% if from_system %}
+			<div class="notice">Showing live crontab contents (read-only mode). You may sync these into your task list.</div>
+		{% endif %}
 	{% endif %}
 </div>

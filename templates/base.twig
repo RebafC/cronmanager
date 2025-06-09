@@ -3,27 +3,31 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>
-			{% block title %}Cron Task Manager
-			{% endblock %}
-		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{% block title %}Cron Task Manager{% endblock %}</title>
+		<link rel="icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 		<link rel="stylesheet" href="/assets/css/style.css"> {% block extra_styles %}{% endblock %}
 		</head>
 		<body>
-      <div id="spinner" class="spinner-overlay" style="display: none;">
-        <div class="spinner"></div>
-      </div>
+			<div id="spinner" class="spinner-overlay" style="display: none;">
+				<div class="spinner"></div>
+			</div>
+					<nav style="float: right;">
+				    {% if session.username %}👤 {{ session.username }} |{% endif %}
+						<a href="/dashboard">Dashboard</a>
+						|
+						<a href="/users">Users</a>
+						|
+						<a href="/invite">Invite</a>
+						|
+						<a href="/logout">Logout</a>
+					</nav>
 			<div class="container">
-				{% if session.username %}
-					<div style="float: right;">👤 {{ session.username }}
-            | <a href="/users">Users</a>
-            | <a href="/invite">Invite</a>
-            | <a href="/logout">Logout</a></div>
-				{% endif %}
 				<h1>🕒 Cron Task Manager</h1>
 
-        <div id="feedback" class="alert" style="display: block;"></div>
+				<div id="feedback" class="alert" style="display: block;"></div>
 				{% if message %}
 					<div class="alert alert-success">{{ message }}</div>
 				{% endif %}

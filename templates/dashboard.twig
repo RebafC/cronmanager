@@ -8,24 +8,31 @@
 <div class="toolbar">
     <span>Viewing tasks from: </span>
     {% if from_system %}
-        <strong>System crontab</strong> |
-        <a href="?source=file">Switch to managed file</a>
+        <strong>System crontab</strong>
+        {% if crontab_available %}
+            | <a href="?source=file">Switch to managed file</a>
+        {% endif %}
     {% else %}
-        <strong>Managed file</strong> |
-        <a href="?source=system">Switch to system crontab</a>
+        <strong>Managed file</strong>
+        {% if crontab_available %}
+            | <a href="?source=system">Switch to system crontab</a>
+        {% endif %}
     {% endif %}
 </div>
 
-<div class="alert alert-warning">
-    <p>You’re viewing the live system crontab. Click below to sync it into the app:</p>
-    <form method="post" action="/sync-crontab">
-        <button type="submit" class="warning">Sync Crontab</button>
-    </form>
-</div>
+{% if from_system and crontab_available %}
+    <div class="alert alert-warning show">
+        <p>You’re viewing the live system crontab. Click below to sync it into the app:</p>
+        <form method="post" action="/sync-crontab">
+            <button type="submit" class="warning">Sync Crontab</button>
+        </form>
+    </div>
+{% endif %}
 
 {% if synced %}
     <div class="alert alert-success show">System crontab synced successfully.</div>
 {% endif %}
+
 
 {% include 'partials/tasks.twig' %}
 {% include 'partials/add.twig' %}

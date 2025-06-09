@@ -44,9 +44,9 @@ class CronManager
         $lines = explode("\n", $content);
         $tasks = [];
 
-        foreach ($lines as $line) {
+        foreach ($lines as $i => $line) {
             $line = trim($line);
-            if ($line !== '' && $parsed = $this->parseCronLine($line)) {
+            if ($line !== '' && $parsed = $this->parseCronLine($line, $i)) {
                 $tasks[] = $parsed;
             }
         }
@@ -584,4 +584,8 @@ BASH;
         return $this->importCron(implode("\n", $ownedLines));
     }
 
+    public function systemCrontabAvailable(): bool
+    {
+        return !$this->isWindows && trim(shell_exec('which crontab')) !== '';
+    }
 }
