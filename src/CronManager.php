@@ -637,4 +637,12 @@ BASH;
 
         return $systemTasks;
     }
+
+    public function hasCrontabChanged(): bool
+    {
+        $system = trim($this->readSystemCrontab());
+        $app = trim(file_get_contents($this->cronFile));
+
+        return $system !== $app;
+    }
 }

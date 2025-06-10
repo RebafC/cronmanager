@@ -28,7 +28,7 @@ switch ($route) {
             header('Location: /login');
             exit;
         }
-        require __DIR__ . '/../src/dashboard.php';
+        require __DIR__ . '/../src/Dashboard.php';
         break;
 
     case 'invite':

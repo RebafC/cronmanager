@@ -51,7 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $error = 'Failed to update task.';
                 }
-                break;
+                $_SESSION['updated_task_id'] = $_POST['task_id'];
+                header('Location: /dashboard');
+                exit;
 
             case 'import':
                 $content = $_POST['cron_content'] ?? '';
@@ -94,6 +96,9 @@ $cronExport = $cronManager->exportCron();
 
 $twig = TwigFactory::create();
 
+$highlightTaskId = $_SESSION['updated_task_id'] ?? null;
+unset($_SESSION['updated_task_id']);
+
 echo $twig->render('dashboard.twig', [
     'base_url' => BASE_URL,
     'from_system' => $fromSystem,
@@ -102,10 +107,12 @@ echo $twig->render('dashboard.twig', [
     'message' => $message,
     'error' => $error,
     'tasks' => $tasks,
+    'highlight_id' => $highlightTaskId,
     'logs' => $logs,
     'executions' => $executions,
     'stats' => $stats,
     'cron_export' => $cronExport,
     'applied' => isset($_GET['applied']) && $_GET['applied'] == 1,
     'synced' => isset($_GET['synced']) && $_GET['synced'] == 1,
+    'show_apply_button' => !$fromSystem && $cronManager->hasCrontabChanged(),
 ]);

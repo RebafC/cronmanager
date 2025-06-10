@@ -15,7 +15,7 @@
 			</thead>
 			<tbody>
 				{% for task in tasks %}
-					<tr class="{{ task.status ?? '' }}">
+					<tr id="task-{{ task.id }}" class="{% if task.id == highlight_id %}just-updated{% endif %}">
 						<td>
 							<span class="code">{{ task.schedule }}</span>
 						</td>

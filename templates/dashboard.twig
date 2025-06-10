@@ -37,7 +37,7 @@
     <div class="alert alert-success show">System crontab synced successfully.</div>
 {% endif %}
 
-{% if not from_system and crontab_available %}
+{% if not from_system and crontab_available and show_apply_button %}
     <form method="post" action="/apply-crontab">
         <button type="submit" class="success">Apply to System Crontab</button>
     </form>
@@ -182,6 +182,7 @@ function showFeedback(message, type = 'success') {
         feedback.innerHTML = '';
     }, 4000);
 }
+
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.querySelector('input[name="command"]');
     const limit = 512;
@@ -195,6 +196,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 input.style.backgroundColor = '';
             }
         });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const updated = document.querySelector('tr.just-updated');
+    if (updated) {
+        setTimeout(() => updated.classList.remove('just-updated'), 3000);
     }
 });
 </script>
