@@ -14,16 +14,21 @@
 			<div id="spinner" class="spinner-overlay" style="display: none;">
 				<div class="spinner"></div>
 			</div>
-					<nav style="float: right;">
-				    {% if session.username %}👤 {{ session.username }} |{% endif %}
-						<a href="/dashboard">Dashboard</a>
-						|
-						<a href="/users">Users</a>
-						|
-						<a href="/invite">Invite</a>
-						|
-						<a href="/logout">Logout</a>
-					</nav>
+				{% if session.username %}
+        <nav style="float: right;">
+          👤 {{ session.username }}
+          |
+          <a href="/dashboard">Dashboard</a>
+          |
+          <a href="/users">Users</a>
+          |
+          <a href="/invite">Invite</a>
+          |
+          <a href="/log">View Cron Log</a>
+          |
+          <a href="/logout">Logout</a>
+        </nav>
+        {% endif %}
 			<div class="container">
 				<h1>🕒 Cron Task Manager</h1>
 

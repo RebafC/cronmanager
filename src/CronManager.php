@@ -66,10 +66,6 @@ class CronManager
             return null;
         }
 
-        foreach ($line as $task) {
-            $task['status'] = in_array($task['command'], array_column($known, 'command')) ? 'known' : 'unknown';
-        }
-
         return [
             'id' => $index,
             'minute' => $parts[0],

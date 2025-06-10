@@ -101,8 +101,26 @@ switch ($route) {
         $auth->handleUserToggle();
         break;
 
+    case 'log':
+        if (!$auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $entries = [];
+
+        if (file_exists(LOG_FILE)) {
+            $entries = array_reverse(file(LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
+        }
+
+        echo $twig->render('log.twig', [
+            'entries' => $entries,
+            'log_size' => round(filesize(LOG_FILE) / 1024, 1), // in KB
+        ]);
+        break;
 
         // more routes here (e.g., register, forgot, change)
+
     default:
         http_response_code(404);
         echo '404 Not Found';

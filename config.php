@@ -8,3 +8,5 @@ define(
 );
 
 define('DBASE', __DIR__ . '/data/cronmmanager.db');
+
+define('LOG_FILE', __DIR__ . '/data/cron_tasks.log');

@@ -1,0 +1,18 @@
+{% extends "base.twig" %}
+{% block title %}Cron Task Log{% endblock %}
+
+{% block content %}
+<h2>Cron Task Log</h2>
+
+<p>Log size: {{ log_size }} KB</p>
+
+{% if entries %}
+    <pre class="log-view">
+{{ entries|join('\n') }}
+    </pre>
+{% else %}
+    <p>No entries yet.</p>
+{% endif %}
+
+<a href="/dashboard" class="button">← Back to Dashboard</a>
+{% endblock %}
