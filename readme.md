@@ -1,68 +1,165 @@
+# 🕒 CronManager
 
-# Cron Task Manager
+**CronManager** is a lightweight, admin-facing web app for managing and monitoring cron jobs.
 
-A PHP 8.2 application for managing cron tasks with a web interface, following PSR-12 standards.
+It provides a clear dashboard, safe sync with the system crontab, and user authentication — making cron easier to work with for small teams, VPS users, and cPanel environments.
 
-## Features
+---
 
-- ✅ View, add, edit, and delete cron tasks
-- ✅ Cross-platform compatibility (Linux/Windows)
-- ✅ Activity logging and tracking
-- ✅ Import/Export cron configurations
-- ✅ Cron schedule validation
-- ✅ Clean web interface
-- ✅ PSR-12 compliant code
+## ✨ Features
 
-## Setup
+- ✅ **Web-based interface** to view, add, edit, delete cron tasks
+- ✅ **System crontab sync** (read-only + apply with safety tagging)
+- ✅ **Init script** to set up the first user via CLI
+- ✅ **User login system** (SQLite-based)
+- ✅ **Email invitations** with secure registration tokens
+- ✅ **Password reset** via email token
+- ✅ **Task execution logging**
+- ✅ **Highlight recently updated tasks**
+- ✅ **Log rotation + archival with retention**
+- ✅ **Smart UI** (spinners, transitions, warnings on long commands)
 
-### Linux (Production)
-1. Install PHP 8.2+ and Apache/Nginx
-2. Clone/upload files to web directory
-3. Run `composer install`
-4. Set proper permissions for log files
-5. Access via web browser
+---
 
-### Windows (Testing)
+## 🚀 Getting Started
 
-1. Install PHP 8.2+ and a local server (XAMMP/WAMP)
-2. Place files in web directory
-3. Create `crontab.txt` with sample cron content
-4. Run `composer install`
-5. Access via localhost
+### ✅ 1. Clone the repo
 
-## Usage
-
-1. **View Tasks**: See all current cron tasks with human-readable descriptions
-2. **Add Tasks**: Use the web form with cron schedule validation
-3. **Edit Tasks**: Click edit button to modify existing tasks
-4. **Delete Tasks**: Remove tasks with confirmation
-5. **Import/Export**: Backup and restore cron configurations
-6. **Activity Logs**: Track all changes made to cron tasks
-
-## File Structure
-
-```dir
-/project-root
-├── composer.json
-├── src/
-│   └── CronManager.php
-├── public/
-│   └── index.php
-├── crontab.txt (Windows testing)
-├── cron_tasks.log (auto-created)
-└── README.md
+```bash
+git clone https://github.com/your-username/cronmanager.git
+cd cronmanager
 ```
 
-## Cron Schedule Format
+### ✅ 2. Install dependencies
 
-- `* * * * *` - minute hour day month weekday
-- `0 0 * * *` - Daily at midnight
-- `*/15 * * * *` - Every 15 minutes
-- `0 9 * * 1` - Every Monday at 9 AM
+```bash
+composer install
+```
 
-## Security Notes
+### ✅ 3. Set up environment
 
-- Validate all inputs
-- Use file locking for concurrent access
-- Sanitize commands before execution
-- Consider access restrictions for production use
+Set your document root to the `/public` directory.
+
+### ✅ 4. Run the init script (first-time only)
+
+```bash
+php scripts/init.php
+```
+
+You'll be prompted to create the first user account (email + password).
+
+---
+
+## 🛠 Usage
+
+### 📋 Dashboard
+
+Once logged in, the dashboard lets you:
+
+- Add new cron tasks (with schedule + command)
+- Edit existing entries
+- Delete tasks
+- Execute manually (if permitted)
+- View system crontab (`?source=system`)
+- Push changes back to system (if crontab is writable)
+
+### 🔁 Syncing with system crontab
+
+- Only lines tagged with `# cronmanager` are imported or managed
+- Other system-level cron jobs (e.g. from cPanel) are left untouched
+- You can safely view live system crontab from the UI
+
+### 📄 Cron Task Log
+
+- Visit `/log` to see task execution entries
+- Log rotation runs via cron (see below)
+- Older logs are archived with a retention limit (default: 5)
+
+---
+
+## 🧹 Log Rotation (Housekeeping)
+
+### To rotate logs manually:
+
+```bash
+php scripts/rotate_log.php
+```
+
+### Example cron task to rotate logs daily:
+
+```cron
+0 0 * * * /usr/bin/php /path/to/scripts/rotate_log.php # cronmanager
+```
+
+---
+
+## 🔐 Authentication & Access
+
+- Login required for all routes except `/login`, `/register`, and `/reset`
+- Public registration is disabled
+- Admins can send invite links via email (token expires after 1 day)
+
+---
+
+## 🧪 Development Notes
+
+- Compatible with Linux servers and Windows dev environments (i.e. testing only)
+- Crontab detection logic adapts to platform (`PHP_OS`)
+- All app-managed tasks are written to `data/crontab.txt`
+- Edits made via the UI are highlighted on save
+- Supports log viewer, but not yet a full log diff viewer (planned)
+
+---
+
+## 📂 File Structure
+
+```
+├── config.php
+├── src/
+│   ├── Auth.php
+│   ├── CronManager.php
+│   ├── Housekeeping.php
+│   └── Mailer.php
+├── public/
+│   ├── index.php
+│   ├── css/
+│   └── templates/
+├── data/
+│   ├── crontab.txt
+│   ├── cron_tasks.log
+│   └── sqlite.db
+├── scripts/
+│   ├── init.php
+│   └── rotate_log.php
+```
+
+---
+
+## 📜 License
+
+MIT License
+
+> This project is open source and permissively licensed. Feel free to use, adapt, or extend it.
+
+```
+MIT License
+
+Copyright (c) 2025 Chris Faber
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do so.
+```
+
+---
+
+## 👤 Credits & Acknowledgments
+
+Developed by **Chris Faber**.
+Guidance and architectural assistance provided via ChatGPT (OpenAI).
+
+> If you found this tool helpful, feel free to fork, star, or share it.
+
+---
