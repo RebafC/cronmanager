@@ -118,12 +118,16 @@ php scripts/rotate_log.php
 ├── src/
 │   ├── Auth.php
 │   ├── CronManager.php
+│   ├── Dashboard.php
 │   ├── Housekeeping.php
+│   ├── Log.php
 │   └── Mailer.php
+│   └── TwigFactory.php
+├── templates/
+│   └── partials
 ├── public/
 │   ├── index.php
 │   ├── css/
-│   └── templates/
 ├── data/
 │   ├── crontab.txt
 │   ├── cron_tasks.log
