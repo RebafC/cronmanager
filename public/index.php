@@ -107,8 +107,8 @@ switch ($route) {
             exit;
         }
 
-        require __DIR__ . '/../src/log.php';
-        
+        require __DIR__ . '/../src/Log.php';
+
         break;
 
         // more routes here (e.g., register, forgot, change)
