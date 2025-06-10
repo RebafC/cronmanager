@@ -86,6 +86,7 @@ if ($fromSystem) {
 } else {
     $tasks = $cronManager->getCronTasks(false);
 }
+
 $logs = $cronManager->getTaskLogs(20);
 $executions = $cronManager->getTaskExecutions(50);
 $stats = $cronManager->getTaskStatistics(30);

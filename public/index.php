@@ -107,16 +107,8 @@ switch ($route) {
             exit;
         }
 
-        $entries = [];
-
-        if (file_exists(LOG_FILE)) {
-            $entries = array_reverse(file(LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
-        }
-
-        echo $twig->render('log.twig', [
-            'entries' => $entries,
-            'log_size' => round(filesize(LOG_FILE) / 1024, 1), // in KB
-        ]);
+        require __DIR__ . '/../src/log.php';
+        
         break;
 
         // more routes here (e.g., register, forgot, change)

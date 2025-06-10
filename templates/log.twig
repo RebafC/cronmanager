@@ -4,7 +4,7 @@
 {% block content %}
 <h2>Cron Task Log</h2>
 
-<p>Log size: {{ log_size }} KB</p>
+{% if log_size %}<p>Log size: {{ log_size }} KB</p>{% endif %}
 
 {% if entries %}
     <pre class="log-view">
