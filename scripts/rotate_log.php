@@ -15,6 +15,6 @@ if ($archive) {
     echo "✅ Log rotated to: $archive\n";
     $removed = $housekeeper->cleanupOldLogs(5);
     echo "🧹 Removed $removed old log(s).\n";
-} else {
-    echo "ℹ️ Nothing to rotate.\n";
+// } else {
+//     echo "ℹ️ Nothing to rotate.\n";
 }

@@ -13,11 +13,11 @@ class CronManager
     private string $logFile;
     private bool $isWindows;
 
-    public function __construct(string $cronFile = '', string $logFile = 'cron_tasks.log')
+    public function __construct()
     {
         $this->isWindows = PHP_OS_FAMILY === 'Windows';
-        $this->cronFile = $cronFile ?: ($this->isWindows ? '../data/crontab.txt' : '../data/crontab.txt');
-        $this->logFile = $logFile;
+        $this->cronFile = CRON_FILE;
+        $this->logFile = LOG_FILE;
 
         $this->initializeFiles();
     }
