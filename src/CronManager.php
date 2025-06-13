@@ -203,7 +203,7 @@ class CronManager
     public function logTask(string $action, string $details): void
     {
         $timestamp = (new DateTime())->format('Y-m-d H:i:s');
-        $logEntry = sprintf("[{%-20s}] {%-8s}: {%s}\n", $timestamp, $action, $details);
+        $logEntry = sprintf("[%-20s] %-8s: %s\n", $timestamp, $action, $details);
         file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
     }
 
