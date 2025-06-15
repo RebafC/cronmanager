@@ -1,4 +1,12 @@
 {% extends "base.twig" %}
+{% block extra_styles %}
+	<style>
+    .log-view {
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
+{% endblock %}
 {% block title %}Cron Task Log{% endblock %}
 
 {% block content %}
@@ -8,7 +16,7 @@
 
 {% if entries %}
     <pre class="log-view">
-{{ entries|join('\n') }}
+{{ entries|join('\n\n') }}
     </pre>
 {% else %}
     <p>No entries yet.</p>
