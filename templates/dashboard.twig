@@ -5,6 +5,13 @@
 {% endblock %}
 
 {% block content %}
+<div class="tab-buttons">
+  <button class="tab-btn" data-target="executions">Executions</button>
+  <button class="tab-btn" data-target="reports">Reports</button>
+  <button class="tab-btn" data-target="import">Import</button>
+  <button class="tab-btn" data-target="logs">Logs</button>
+</div>
+
 <div class="toolbar">
     <span>Viewing tasks from: </span>
     {% if from_system %}
@@ -205,5 +212,30 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => updated.classList.remove('just-updated'), 3000);
     }
 });
+
+ocument.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.tab-btn');
+  const tabs = document.querySelectorAll('.tab-content');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remove .active from all buttons
+      buttons.forEach(b => b.classList.remove('active'));
+      // Add .active to the clicked button
+      btn.classList.add('active');
+
+      // Hide all tab content
+      tabs.forEach(tab => tab.classList.remove('active'));
+
+      // Show selected tab
+      const targetId = btn.getAttribute('data-target');
+      const targetTab = document.getElementById(targetId);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+    });
+  });
+});
+
 </script>
 {% endblock %}
