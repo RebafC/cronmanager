@@ -40,7 +40,7 @@
 				{% for command, cmdStats in stats.commands %}
 					<tr>
 						<td>
-							<span class="code">{{ command|length > 60 ? command|slice(0, 60) ~ '...' : command }}</span>
+							<span class="code wrap">{{ command }}</span>
 						</td>
 						<td>{{ cmdStats.total }}</td>
 						<td>

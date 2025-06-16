@@ -120,5 +120,6 @@ echo $twig->render('dashboard.twig', [
     'cron_export' => $cronExport,
     'applied' => isset($_GET['applied']) && $_GET['applied'] == 1,
     'synced' => isset($_GET['synced']) && $_GET['synced'] == 1,
+    'server_time' => date('Y-m-d H:i:s T'),
     'show_apply_button' => !$fromSystem && $cronManager->hasCrontabChanged(),
 ]);

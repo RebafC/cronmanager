@@ -36,6 +36,23 @@
         </form>
     </div>
 {% endif %}
+<div>Server time:{{ server_time }} (at last page refresh)</div>
+
+{% if error %}
+    <div class="alert alert-error show">{{ error }}</div>
+{% endif %}
+
+{% if message %}
+    <div class="alert alert-success show">{{ message }}</div>
+{% endif %}
+
+{% if feedback %}
+    <div class="alert alert-info show">{{ feedback }}</div>
+{% endif %}
+
+{% if not from_system and not crontab_available %}
+    <div class="alert alert-warning show">Crontab file not found. Please create it at {{ crontab_path }}.</div>
+{% endif %}
 
 {% if applied %}
     <div class="alert alert-success show">Crontab successfully updated from app-managed task list.</div>
@@ -51,7 +68,9 @@
     </form>
 {% endif %}
 
-{% include 'partials/tasks.twig' %}
+<div id="task-table">
+  {% include 'partials/tasks.twig' %}
+</div>
 {% include 'partials/add.twig' %}
 {% include 'partials/executions.twig' %}
 {% include 'partials/reports.twig' %}
@@ -141,7 +160,12 @@ function updateTask(form) {
     .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        document.body.innerHTML = doc.body.innerHTML;
+        const newTable = doc.querySelector('#task-table');
+        const currentTable = document.querySelector('#task-table');
+
+        if (newTable && currentTable) {
+          currentTable.innerHTML = newTable.innerHTML;
+        }
         document.getElementById('spinner').style.display = 'none';
 
         // Show feedback

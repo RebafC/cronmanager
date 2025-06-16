@@ -139,3 +139,8 @@ button.execute:hover {
   border-radius: 5px;
   box-sizing: border-box;
 }
+
+.code.wrap {
+  white-space: pre-wrap;
+  font-family: monospace;
+}

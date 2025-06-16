@@ -8,4 +8,5 @@ interface CronAdapterInterface
     public function writeTasks(array $lines): bool;
     public function getRaw(): string;
     public function update(): bool;
+    public function isAvailable(): bool;
 }

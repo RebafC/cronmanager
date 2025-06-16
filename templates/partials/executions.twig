@@ -20,7 +20,7 @@
 					<tr style="background-color: {{ execution.status == 'SUCCESS' ? '#d4edda' : '#f8d7da' }};">
 						<td>{{ execution.timestamp }}</td>
 						<td>
-							<span class="code">{{ execution.command|length > 50 ? execution.command|slice(0, 50) ~ '...' : execution.command }}</span>
+							<span class="code wrap">{{ execution.command }}</span>
 						</td>
 						<td>
 							<span style="font-weight: bold; color: {{ execution.status == 'SUCCESS' ? '#155724' : '#721c24' }};">
