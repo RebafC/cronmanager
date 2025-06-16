@@ -6,8 +6,14 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use CronManager\CronManager;
 use CronManager\TwigFactory;
+use CronManager\LinuxCronAdapter;
+use CronManager\WindowsCronAdapter;
 
-$cronManager = new CronManager();
+$adapter = stripos(PHP_OS, 'WIN') === false
+    ? new LinuxCronAdapter()
+    : new WindowsCronAdapter();
+
+$cronManager = new CronManager($adapter);
 $message = '';
 $error = '';
 

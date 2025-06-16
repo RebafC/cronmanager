@@ -17,6 +17,7 @@
 *.DS_Store
 .vscode/
 .idea/
+.archive/
 
 # OS-specific junk
 Thumbs.db

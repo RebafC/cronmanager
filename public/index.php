@@ -5,13 +5,19 @@ require_once __DIR__ . '/../config.php';
 
 use CronManager\Auth;
 use CronManager\CronManager;
+use CronManager\LinuxCronAdapter;
+use CronManager\WindowsCronAdapter;
 
 session_start();
 
 $route = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 $auth = new Auth();
-$cronManager = new CronManager();
+$adapter = stripos(PHP_OS, 'WIN') === false
+    ? new LinuxCronAdapter()
+    : new WindowsCronAdapter();
+
+$cronManager = new CronManager($adapter);
 
 switch ($route) {
     case '':

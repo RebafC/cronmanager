@@ -6,16 +6,15 @@ namespace CronManager;
 
 use DateTime;
 use Exception;
+use CronManager\Interfaces\CronAdapterInterface;
 
 class CronManager
 {
     private string $cronFile;
     private string $logFile;
-    private bool $isWindows;
 
-    public function __construct()
+    public function __construct(private CronAdapterInterface $adapter)
     {
-        $this->isWindows = PHP_OS_FAMILY === 'Windows';
         $this->cronFile = CRON_FILE;
         $this->logFile = LOG_FILE;
 
@@ -35,12 +34,7 @@ class CronManager
 
     public function getCronTasks(bool $fromSystem = false): array
     {
-        if ($fromSystem) {
-            $content = $this->readSystemCrontab();
-        } else {
-            $content = file_exists($this->cronFile) ? file_get_contents($this->cronFile) : '';
-        }
-
+        $content = $fromSystem ? $this->adapter->getRaw() : file_get_contents($this->cronFile);
         $lines = explode("\n", $content);
         $tasks = [];
 
@@ -196,8 +190,8 @@ class CronManager
 
     public function updateSystemCron(): void
     {
-        $file = $this->cronFile;
-        $output = shell_exec("crontab " . escapeshellarg($file) . " 2>&1");
+        $content = file_get_contents($this->cronFile);
+        $this->adapter->writeRaw($content);
     }
 
     public function logTask(string $action, string $details): void
@@ -586,7 +580,7 @@ BASH;
 
     public function readSystemCrontab(): string
     {
-        return trim(shell_exec('crontab -l 2>/dev/null'));
+        return $this->adapter->getRaw();
     }
 
     public function syncFromSystemCrontab(): bool
@@ -621,7 +615,7 @@ BASH;
 
     public function systemCrontabAvailable(): bool
     {
-        return !$this->isWindows && trim(shell_exec('which crontab')) !== '';
+        return $this->adapter->isAvailable();
     }
 
     public function getTaskDifferences(): array
@@ -640,9 +634,8 @@ BASH;
 
     public function hasCrontabChanged(): bool
     {
-        $system = trim($this->readSystemCrontab());
+        $system = trim($this->adapter->getRaw());
         $app = trim(file_get_contents($this->cronFile));
-
         return $system !== $app;
     }
 }
