@@ -6,7 +6,7 @@
 /data/mail.log
 
 # Other data
-/crontab.txt
+/data/crontab.txt
 
 # IDE/editor files
 *.log
@@ -30,4 +30,4 @@ config.php
 
 # misc
 tmp/
-public_html/error_log
+**/error_log
