@@ -26,7 +26,7 @@ It provides a clear dashboard, safe sync with the system crontab, and user authe
 ### ✅ 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/cronmanager.git
+git clone https://github.com/RebafC/cronmanager.git
 cd cronmanager
 ```
 
